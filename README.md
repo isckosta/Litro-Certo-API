@@ -131,11 +131,19 @@ http://localhost:8000/api/v1
 
 ## 📚 Documentação
 
-### Swagger UI
-Acesse a documentação interativa em:
-```
-http://localhost:8000/api/documentation
-```
+### 🔗 Links Úteis
+
+- **API:** http://localhost:8000/api/v1
+- **Swagger UI:** http://localhost:8000/api/documentation
+- **RabbitMQ Management:** http://localhost:15672 (litrocerto/secret)
+- **pgAdmin:** http://localhost:5050 (admin@litrocerto.com.br/admin123)
+- **Grafana:** http://localhost:3000 (admin/admin123)
+- **Prometheus:** http://localhost:9090
+- **Loki:** http://localhost:3100
+- **Redis Insight:** http://localhost:5540
+- **Mailhog:** http://localhost:8025
+- **MinIO Console:** http://localhost:9001 (litrocerto/litrocerto123)
+- **Portainer:** https://localhost:9443 (criar senha no primeiro acesso)
 
 ### Postman Collection
 Importe o arquivo `LitroCerto_API.postman_collection.json` no Postman.
