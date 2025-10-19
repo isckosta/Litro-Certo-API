@@ -85,7 +85,7 @@ class AuthTest extends TestCase
     {
         $user = User::factory()->create();
         $user->assignRole('user');
-        $token = auth()->login($user);
+        $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', "Bearer $token")
             ->postJson('/api/v1/auth/logout');
@@ -98,7 +98,7 @@ class AuthTest extends TestCase
     {
         $user = User::factory()->create();
         $user->assignRole('user');
-        $token = auth()->login($user);
+        $token = auth('api')->login($user);
 
         $response = $this->withHeader('Authorization', "Bearer $token")
             ->postJson('/api/v1/auth/refresh');
