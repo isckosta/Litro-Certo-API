@@ -28,6 +28,8 @@
         <env name="DB_DATABASE" value="litrocerto_test"/>
         <env name="DB_USERNAME" value="litrocerto"/>
         <env name="DB_PASSWORD" value="secret"/>
+        <env name="JWT_TTL" value="60"/>
+        <env name="JWT_REFRESH_TTL" value="20160"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
