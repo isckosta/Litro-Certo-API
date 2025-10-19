@@ -66,6 +66,8 @@ jobs:
           echo "CACHE_DRIVER=redis" >> .env
           echo "SESSION_DRIVER=redis" >> .env
           echo "QUEUE_CONNECTION=sync" >> .env
+          echo "JWT_TTL=60" >> .env
+          echo "JWT_REFRESH_TTL=20160" >> .env
 
       - name: Generate application key
         run: php artisan key:generate
