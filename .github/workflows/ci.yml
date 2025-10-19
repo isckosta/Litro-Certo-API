@@ -53,38 +53,29 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
 
+      - name: Configure environment
+        run: |
+          echo "DB_CONNECTION=pgsql" >> .env
+          echo "DB_HOST=localhost" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "DB_DATABASE=litrocerto_test" >> .env
+          echo "DB_USERNAME=litrocerto" >> .env
+          echo "DB_PASSWORD=secret" >> .env
+          echo "REDIS_HOST=localhost" >> .env
+          echo "REDIS_PORT=6379" >> .env
+          echo "CACHE_DRIVER=redis" >> .env
+          echo "SESSION_DRIVER=redis" >> .env
+
       - name: Generate application key
         run: php artisan key:generate
 
       - name: Generate JWT secret
-        run: php artisan jwt:secret
+        run: php artisan jwt:secret --force
 
       - name: Run migrations
-        env:
-          DB_CONNECTION: pgsql
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_DATABASE: litrocerto_test
-          DB_USERNAME: litrocerto
-          DB_PASSWORD: secret
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
-          CACHE_DRIVER: redis
-          SESSION_DRIVER: redis
         run: php artisan migrate --force
 
       - name: Run tests
-        env:
-          DB_CONNECTION: pgsql
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_DATABASE: litrocerto_test
-          DB_USERNAME: litrocerto
-          DB_PASSWORD: secret
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
-          CACHE_DRIVER: redis
-          SESSION_DRIVER: redis
         run: php artisan test --coverage
 
       - name: Run Laravel Pint (Code Style)
