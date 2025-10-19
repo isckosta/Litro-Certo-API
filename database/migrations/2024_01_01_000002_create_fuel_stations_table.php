@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -21,9 +22,9 @@ return new class extends Migration
             $table->string('state', 2);
             $table->string('zip_code', 9);
             $table->string('phone', 20)->nullable();
-            $table->geography('location', 'point', 4326);
-            $table->decimal('latitude', 10, 8);
-            $table->decimal('longitude', 11, 8);
+            $table->geography('location', 'point', 4326)->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->json('services')->nullable(); // ["wifi", "convenience_store", "car_wash"]
             $table->json('payment_methods')->nullable(); // ["credit_card", "debit_card", "pix"]
             $table->json('opening_hours')->nullable();
@@ -33,15 +34,15 @@ return new class extends Migration
             $table->integer('rating_count')->default(0);
             $table->timestamps();
             $table->softDeletes();
-
-            // Spatial index for geolocation queries
-            $table->spatialIndex('location');
             
             // Regular indexes
             $table->index(['city', 'state']);
             $table->index('is_active');
             $table->index('brand');
         });
+
+        // Add spatial index after table creation (nullable columns can't have spatial index in creation)
+        DB::statement('CREATE INDEX fuel_stations_location_idx ON fuel_stations USING GIST (location) WHERE location IS NOT NULL');
     }
 
     /**
