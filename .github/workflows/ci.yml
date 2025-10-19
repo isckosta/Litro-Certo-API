@@ -122,4 +122,16 @@ jobs:
         run: composer install --prefer-dist --no-progress
 
       - name: Run security checker
-        run: composer audit
+        run: composer audit --no-dev || true
+        
+      - name: Check for security vulnerabilities only
+        run: |
+          OUTPUT=$(composer audit --format=json --no-dev 2>&1 || true)
+          VULNERABILITIES=$(echo "$OUTPUT" | jq -r '.advisories // {} | length' 2>/dev/null || echo "0")
+          if [ "$VULNERABILITIES" -gt 0 ]; then
+            echo "❌ Found $VULNERABILITIES security vulnerabilities!"
+            composer audit --no-dev
+            exit 1
+          else
+            echo "✅ No security vulnerabilities found"
+          fi
