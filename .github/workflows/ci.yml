@@ -65,6 +65,7 @@ jobs:
           echo "REDIS_PORT=6379" >> .env
           echo "CACHE_DRIVER=redis" >> .env
           echo "SESSION_DRIVER=redis" >> .env
+          echo "QUEUE_CONNECTION=sync" >> .env
 
       - name: Generate application key
         run: php artisan key:generate
