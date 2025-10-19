@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Jhaoda\LaravelPostgis\Eloquent\PostgisTrait;
+use Illuminate\Support\Facades\DB;
 
 class FuelStation extends Model
 {
-    use HasFactory, SoftDeletes, PostgisTrait;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
@@ -44,10 +44,6 @@ class FuelStation extends Model
         'rating_count' => 'integer',
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
-    ];
-
-    protected $postgisFields = [
-        'location',
     ];
 
     // Relationships
