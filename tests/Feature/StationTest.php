@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use App\Models\FuelStation;
 use App\Models\FuelPrice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Jhaoda\LaravelPostgis\Geometries\Point;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class StationTest extends TestCase
@@ -29,12 +29,13 @@ class StationTest extends TestCase
             'city' => 'São Paulo',
             'state' => 'SP',
             'zip_code' => '01310-100',
-            'latitude' => -23.561684,
-            'longitude' => -46.655981,
-            'location' => new Point(-23.561684, -46.655981, 4326),
             'is_active' => true,
             'is_verified' => true,
         ]);
+        
+        // Set location using PostGIS
+        DB::statement("UPDATE fuel_stations SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326), latitude = ?, longitude = ? WHERE id = ?", 
+            [-46.655981, -23.561684, -23.561684, -46.655981, $station->id]);
 
         // Add prices
         FuelPrice::create([
@@ -86,7 +87,7 @@ class StationTest extends TestCase
     public function test_nearby_stations_are_ordered_by_distance(): void
     {
         // Create another station farther away
-        FuelStation::create([
+        $station2 = FuelStation::create([
             'name' => 'Posto Teste Distante',
             'brand' => 'Test',
             'cnpj' => '98.765.432/0001-10',
@@ -94,12 +95,12 @@ class StationTest extends TestCase
             'city' => 'São Paulo',
             'state' => 'SP',
             'zip_code' => '01000-000',
-            'latitude' => -23.550,
-            'longitude' => -46.650,
-            'location' => new Point(-23.550, -46.650, 4326),
             'is_active' => true,
             'is_verified' => true,
         ]);
+        
+        DB::statement("UPDATE fuel_stations SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326), latitude = ?, longitude = ? WHERE id = ?", 
+            [-46.650, -23.550, -23.550, -46.650, $station2->id]);
 
         $response = $this->getJson('/api/v1/stations/nearby?latitude=-23.561684&longitude=-46.655981&radius=50');
 
