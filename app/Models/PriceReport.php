@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Jhaoda\LaravelPostgis\Eloquent\PostgisTrait;
 
 class PriceReport extends Model
 {
-    use HasFactory, PostgisTrait;
+    use HasFactory;
 
     protected $fillable = [
         'fuel_station_id',
@@ -27,10 +26,6 @@ class PriceReport extends Model
     protected $casts = [
         'price' => 'decimal:3',
         'reviewed_at' => 'datetime',
-    ];
-
-    protected $postgisFields = [
-        'location',
     ];
 
     // Relationships
