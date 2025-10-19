@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\FuelStation;
 use Illuminate\Database\Seeder;
-use Jhaoda\LaravelPostgis\Geometries\Point;
+use Illuminate\Support\Facades\DB;
 
 class FuelStationSeeder extends Seeder
 {
@@ -101,9 +101,14 @@ class FuelStationSeeder extends Seeder
             $latitude = $stationData['latitude'];
             $longitude = $stationData['longitude'];
             
-            $stationData['location'] = new Point($latitude, $longitude, 4326);
+            // Remove lat/lng from data as we'll set location separately
+            unset($stationData['latitude'], $stationData['longitude']);
             
-            FuelStation::create($stationData);
+            $station = FuelStation::create($stationData);
+            
+            // Set PostGIS location using raw SQL
+            DB::statement("UPDATE fuel_stations SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326), latitude = ?, longitude = ? WHERE id = ?", 
+                [$longitude, $latitude, $latitude, $longitude, $station->id]);
         }
     }
 }

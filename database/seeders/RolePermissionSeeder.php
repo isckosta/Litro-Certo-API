@@ -47,15 +47,15 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Create roles and assign permissions
-        $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo(Permission::all());
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $adminRole->syncPermissions(Permission::all());
 
-        $moderatorRole = Role::create(['name' => 'moderator']);
-        $moderatorRole->givePermissionTo([
+        $moderatorRole = Role::firstOrCreate(['name' => 'moderator']);
+        $moderatorRole->syncPermissions([
             'view-stations',
             'update-stations',
             'verify-stations',
@@ -66,8 +66,8 @@ class RolePermissionSeeder extends Seeder
             'moderate-reviews',
         ]);
 
-        $userRole = Role::create(['name' => 'user']);
-        $userRole->givePermissionTo([
+        $userRole = Role::firstOrCreate(['name' => 'user']);
+        $userRole->syncPermissions([
             'view-stations',
             'view-prices',
             'report-prices',
