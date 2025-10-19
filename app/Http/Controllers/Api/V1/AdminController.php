@@ -19,10 +19,13 @@ class AdminController extends Controller
      *     path="/api/v1/admin/health",
      *     summary="Health check endpoint",
      *     tags={"Admin"},
+     *
      *     @OA\Response(
      *         response=200,
      *         description="System health status",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="string", example="healthy"),
      *             @OA\Property(property="timestamp", type="string", format="date-time"),
      *             @OA\Property(property="services", type="object")
@@ -37,7 +40,7 @@ class AdminController extends Controller
             'cache' => $this->checkCache(),
         ];
 
-        $allHealthy = !in_array(false, array_column($services, 'healthy'));
+        $allHealthy = ! in_array(false, array_column($services, 'healthy'));
 
         return response()->json([
             'status' => $allHealthy ? 'healthy' : 'unhealthy',
@@ -51,6 +54,7 @@ class AdminController extends Controller
     {
         try {
             DB::connection()->getPdo();
+
             return ['healthy' => true, 'message' => 'Database connection successful'];
         } catch (\Exception $e) {
             return ['healthy' => false, 'message' => 'Database connection failed'];
@@ -62,6 +66,7 @@ class AdminController extends Controller
         try {
             cache()->put('health_check', true, 10);
             $result = cache()->get('health_check');
+
             return ['healthy' => $result === true, 'message' => 'Cache working'];
         } catch (\Exception $e) {
             return ['healthy' => false, 'message' => 'Cache failed'];

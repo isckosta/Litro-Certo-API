@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\FuelStation;
 use App\Models\FuelPrice;
+use App\Models\FuelStation;
 use Illuminate\Database\Seeder;
 
 class FuelPriceSeeder extends Seeder
@@ -18,7 +18,7 @@ class FuelPriceSeeder extends Seeder
 
         foreach ($stations as $station) {
             foreach ($fuelTypes as $fuelType) {
-                $basePrice = match($fuelType) {
+                $basePrice = match ($fuelType) {
                     'gasoline' => 5.89,
                     'ethanol' => 3.99,
                     'diesel' => 5.49,

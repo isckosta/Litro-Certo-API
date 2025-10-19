@@ -4,10 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 class FuelStation extends Model
 {
@@ -95,20 +94,20 @@ class FuelStation extends Model
 
     public function scopeNearby($query, float $latitude, float $longitude, float $radiusKm = 10)
     {
-        return $query->selectRaw("
+        return $query->selectRaw('
             *,
             ST_Distance(
                 location::geography,
                 ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography
             ) / 1000 as distance_km
-        ", [$longitude, $latitude])
-        ->whereRaw("
+        ', [$longitude, $latitude])
+            ->whereRaw('
             ST_DWithin(
                 location::geography,
                 ST_SetSRID(ST_MakePoint(?, ?), 4326)::geography,
                 ?
             )
-        ", [$longitude, $latitude, $radiusKm * 1000])
-        ->orderBy('distance_km');
+        ', [$longitude, $latitude, $radiusKm * 1000])
+            ->orderBy('distance_km');
     }
 }

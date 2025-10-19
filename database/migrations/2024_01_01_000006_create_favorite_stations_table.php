@@ -19,7 +19,7 @@ return new class extends Migration
 
             // Unique constraint
             $table->unique(['user_id', 'fuel_station_id']);
-            
+
             // Index
             $table->index('user_id');
         });

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 // API V1 Routes
 Route::prefix('v1')->group(function () {
-    
+
     // Public routes
     Route::prefix('auth')->group(function () {
         Route::post('register', [AuthController::class, 'register']);
@@ -28,7 +28,7 @@ Route::prefix('v1')->group(function () {
 
     // Protected routes (require authentication)
     Route::middleware('auth:api')->group(function () {
-        
+
         // Auth routes
         Route::prefix('auth')->group(function () {
             Route::post('logout', [AuthController::class, 'logout']);

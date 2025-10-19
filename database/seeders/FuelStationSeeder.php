@@ -100,14 +100,14 @@ class FuelStationSeeder extends Seeder
         foreach ($stations as $stationData) {
             $latitude = $stationData['latitude'];
             $longitude = $stationData['longitude'];
-            
+
             // Remove lat/lng from data as we'll set location separately
             unset($stationData['latitude'], $stationData['longitude']);
-            
+
             $station = FuelStation::create($stationData);
-            
+
             // Set PostGIS location using raw SQL
-            DB::statement("UPDATE fuel_stations SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326), latitude = ?, longitude = ? WHERE id = ?", 
+            DB::statement('UPDATE fuel_stations SET location = ST_SetSRID(ST_MakePoint(?, ?), 4326), latitude = ?, longitude = ? WHERE id = ?',
                 [$longitude, $latitude, $latitude, $longitude, $station->id]);
         }
     }

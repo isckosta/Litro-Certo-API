@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -24,20 +24,20 @@ class RolePermissionSeeder extends Seeder
             'update-stations',
             'delete-stations',
             'verify-stations',
-            
+
             // Price permissions
             'view-prices',
             'report-prices',
             'approve-prices',
             'reject-prices',
-            
+
             // Review permissions
             'view-reviews',
             'create-reviews',
             'update-reviews',
             'delete-reviews',
             'moderate-reviews',
-            
+
             // User permissions
             'view-users',
             'create-users',

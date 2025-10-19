@@ -20,30 +20,40 @@ class StationController extends Controller
      *     path="/api/v1/stations/nearby",
      *     summary="Get nearby fuel stations",
      *     tags={"Stations"},
+     *
      *     @OA\Parameter(
      *         name="latitude",
      *         in="query",
      *         required=true,
+     *
      *         @OA\Schema(type="number", format="float", example=-23.561684)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="longitude",
      *         in="query",
      *         required=true,
+     *
      *         @OA\Schema(type="number", format="float", example=-46.655981)
      *     ),
+     *
      *     @OA\Parameter(
      *         name="radius",
      *         in="query",
+     *
      *         @OA\Schema(type="number", format="float", example=10)
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="List of nearby stations",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
      *         )
      *     ),
+     *
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
@@ -52,7 +62,7 @@ class StationController extends Controller
         $request->validate([
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
-            'radius' => 'nullable|numeric|min:1|max:' . config('app.max_search_radius_km', 50),
+            'radius' => 'nullable|numeric|min:1|max:'.config('app.max_search_radius_km', 50),
         ]);
 
         $latitude = $request->latitude;
@@ -82,19 +92,25 @@ class StationController extends Controller
      *     path="/api/v1/stations/{id}",
      *     summary="Get station details",
      *     tags={"Stations"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Station details",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="data", type="object")
      *         )
      *     ),
+     *
      *     @OA\Response(response=404, description="Station not found")
      * )
      */
@@ -114,19 +130,25 @@ class StationController extends Controller
      *     path="/api/v1/stations/{id}/prices",
      *     summary="Get station prices",
      *     tags={"Stations"},
+     *
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
      *         required=true,
+     *
      *         @OA\Schema(type="integer")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Station prices",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
      *         )
      *     ),
+     *
      *     @OA\Response(response=404, description="Station not found")
      * )
      */
