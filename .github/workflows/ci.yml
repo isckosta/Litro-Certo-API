@@ -67,6 +67,10 @@ jobs:
           DB_DATABASE: litrocerto_test
           DB_USERNAME: litrocerto
           DB_PASSWORD: secret
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          CACHE_DRIVER: redis
+          SESSION_DRIVER: redis
         run: php artisan migrate --force
 
       - name: Run tests
@@ -77,6 +81,10 @@ jobs:
           DB_DATABASE: litrocerto_test
           DB_USERNAME: litrocerto
           DB_PASSWORD: secret
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          CACHE_DRIVER: redis
+          SESSION_DRIVER: redis
         run: php artisan test --coverage
 
       - name: Run Laravel Pint (Code Style)
