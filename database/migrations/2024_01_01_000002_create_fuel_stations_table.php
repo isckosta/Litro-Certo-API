@@ -42,7 +42,10 @@ return new class extends Migration
         });
 
         // Add spatial index after table creation (nullable columns can't have spatial index in creation)
-        DB::statement('CREATE INDEX fuel_stations_location_idx ON fuel_stations USING GIST (location) WHERE location IS NOT NULL');
+        // Only for PostgreSQL - SQLite doesn't support spatial indexes
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement('CREATE INDEX fuel_stations_location_idx ON fuel_stations USING GIST (location) WHERE location IS NOT NULL');
+        }
     }
 
     /**
