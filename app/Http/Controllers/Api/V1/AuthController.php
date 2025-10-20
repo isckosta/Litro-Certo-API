@@ -3,12 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 /**
  * @OA\Tag(
@@ -51,42 +49,22 @@ class AuthController extends Controller
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'phone' => 'nullable|string|max:20',
-        ]);
+        $result = AuthService::register($request->validated());
 
-        if ($validator->fails()) {
+        if (!$result['success']) {
             return response()->json([
                 'type' => 'https://tools.ietf.org/html/rfc7231#section-6.5.1',
-                'title' => 'Validation Error',
-                'status' => 422,
-                'errors' => $validator->errors(),
-            ], 422);
+                'title' => 'Registration Error',
+                'status' => 500,
+                'detail' => $result['message'],
+            ], 500);
         }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'is_active' => true,
-        ]);
-
-        $user->assignRole('user');
-
         return response()->json([
-            'message' => 'User registered successfully',
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'phone' => $user->phone,
-            ],
+            'message' => $result['message'],
+            'user' => $result['user'],
         ], 201);
     }
 
@@ -122,20 +100,25 @@ class AuthController extends Controller
      *     @OA\Response(response=401, description="Invalid credentials")
      * )
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->only('email', 'password');
+        $result = AuthService::login($request->validated());
 
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$result['success']) {
             return response()->json([
                 'type' => 'https://tools.ietf.org/html/rfc7235#section-3.1',
                 'title' => 'Unauthorized',
                 'status' => 401,
-                'detail' => 'Invalid credentials',
+                'detail' => $result['message'],
             ], 401);
         }
 
-        return $this->respondWithToken($token);
+        return response()->json([
+            'access_token' => $result['access_token'],
+            'token_type' => $result['token_type'],
+            'expires_in' => $result['expires_in'],
+            'user' => $result['user'],
+        ]);
     }
 
     /**
@@ -162,7 +145,23 @@ class AuthController extends Controller
      */
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(auth()->refresh());
+        $result = AuthService::refresh();
+
+        if (!$result['success']) {
+            return response()->json([
+                'type' => 'https://tools.ietf.org/html/rfc7235#section-3.1',
+                'title' => 'Unauthorized',
+                'status' => 401,
+                'detail' => $result['message'],
+            ], 401);
+        }
+
+        return response()->json([
+            'access_token' => $result['access_token'],
+            'token_type' => $result['token_type'],
+            'expires_in' => $result['expires_in'],
+            'user' => $result['user'],
+        ]);
     }
 
     /**
@@ -185,21 +184,17 @@ class AuthController extends Controller
      */
     public function logout(): JsonResponse
     {
-        auth()->logout();
+        $result = AuthService::logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
-    }
+        if (!$result['success']) {
+            return response()->json([
+                'type' => 'https://tools.ietf.org/html/rfc7235#section-3.1',
+                'title' => 'Logout Error',
+                'status' => 500,
+                'detail' => $result['message'],
+            ], 500);
+        }
 
-    /**
-     * Get the token array structure.
-     */
-    protected function respondWithToken(string $token): JsonResponse
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60,
-            'user' => JWTAuth::user(),
-        ]);
+        return response()->json(['message' => $result['message']]);
     }
 }

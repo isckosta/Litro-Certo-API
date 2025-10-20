@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\AdminService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Tag(
@@ -35,41 +35,20 @@ class AdminController extends Controller
      */
     public function health(): JsonResponse
     {
-        $services = [
-            'database' => $this->checkDatabase(),
-            'cache' => $this->checkCache(),
-        ];
+        $result = AdminService::getHealthStatus();
 
-        $allHealthy = ! in_array(false, array_column($services, 'healthy'));
+        if (!$result['success']) {
+            return response()->json([
+                'status' => $result['status'],
+                'timestamp' => $result['timestamp'],
+                'error' => $result['error'],
+            ], 500);
+        }
 
         return response()->json([
-            'status' => $allHealthy ? 'healthy' : 'unhealthy',
-            'timestamp' => now()->toIso8601String(),
-            'services' => $services,
-            'version' => config('app.version', '1.0.0'),
-        ], $allHealthy ? 200 : 503);
-    }
-
-    private function checkDatabase(): array
-    {
-        try {
-            DB::connection()->getPdo();
-
-            return ['healthy' => true, 'message' => 'Database connection successful'];
-        } catch (\Exception $e) {
-            return ['healthy' => false, 'message' => 'Database connection failed'];
-        }
-    }
-
-    private function checkCache(): array
-    {
-        try {
-            cache()->put('health_check', true, 10);
-            $result = cache()->get('health_check');
-
-            return ['healthy' => $result === true, 'message' => 'Cache working'];
-        } catch (\Exception $e) {
-            return ['healthy' => false, 'message' => 'Cache failed'];
-        }
+            'status' => $result['status'],
+            'timestamp' => $result['timestamp'],
+            'services' => $result['services'],
+        ]);
     }
 }
