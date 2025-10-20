@@ -10,12 +10,12 @@ class AdminService
     /**
      * Get system health status.
      */
-    public static function getHealthStatus(): array
+    public function getHealthStatus(): array
     {
         try {
             $services = [
-                'database' => self::checkDatabase(),
-                'cache' => self::checkCache(),
+                'database' => $this->checkDatabase(),
+                'cache' => $this->checkCache(),
             ];
 
             $allHealthy = !in_array(false, array_column($services, 'healthy'));
@@ -25,6 +25,7 @@ class AdminService
                 'status' => $allHealthy ? 'healthy' : 'unhealthy',
                 'timestamp' => now()->toISOString(),
                 'services' => $services,
+                'version' => config('app.version', '1.0.0'),
             ];
         } catch (\Exception $e) {
             return [
@@ -39,7 +40,7 @@ class AdminService
     /**
      * Check database connection.
      */
-    private static function checkDatabase(): array
+    private function checkDatabase(): array
     {
         try {
             DB::connection()->getPdo();
@@ -53,7 +54,7 @@ class AdminService
     /**
      * Check cache connection.
      */
-    private static function checkCache(): array
+    private function checkCache(): array
     {
         try {
             Cache::put('health_check', true, 10);

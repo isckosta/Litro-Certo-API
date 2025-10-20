@@ -49,6 +49,7 @@ class AdminController extends Controller
             'status' => $result['status'],
             'timestamp' => $result['timestamp'],
             'services' => $result['services'],
+            'version' => $result['version'],
         ]);
     }
 }
