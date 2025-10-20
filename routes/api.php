@@ -27,14 +27,20 @@ Route::prefix('v1')->group(function () {
     });
 
     // Protected routes (require authentication)
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware('jwt.auth')->group(function () {
 
         // Auth routes
         Route::prefix('auth')->group(function () {
             Route::post('logout', [AuthController::class, 'logout']);
-            Route::post('refresh', [AuthController::class, 'refresh']);
         });
 
         // Add more protected routes here
+    });
+
+    // Refresh token route (special middleware)
+    Route::middleware('jwt.refresh')->group(function () {
+        Route::prefix('auth')->group(function () {
+            Route::post('refresh', [AuthController::class, 'refresh']);
+        });
     });
 });
